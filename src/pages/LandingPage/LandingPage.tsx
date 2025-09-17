@@ -6,10 +6,12 @@ import PrimaryButton from "../../components/common/PrimaryButton";
 import ServiceDetailsCard from "../../components/ServiceDetailsCard";
 import DynamicIcon from "../../components/DynamicIcon";
 import { TipsAndUpdatesRounded } from "@mui/icons-material";
+import { isLoggedIn, logout } from "../../utills/auth";
 
 function LandingPage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const loggedIn = isLoggedIn();
   const content = t("services.content", { returnObjects: true }) as Array<{
     icon: string;
     title: string;
@@ -19,19 +21,31 @@ function LandingPage() {
   return (
     <>
       <Navbar
-        buttons={[
-          { label: "Home", onClick: () => navigate("/"), type: "text" },
-          {
-            label: "Dashboard",
-            onClick: () => navigate("/dashboard"),
-            type: "text",
-          },
-          {
-            label: "Login",
-            onClick: () => navigate("/login"),
-            type: "primary",
-          },
-        ]}
+        buttons={
+          loggedIn
+            ? [
+                {
+                  label: "Dashboard",
+                  onClick: () => navigate("/dashboard"),
+                  type: "text",
+                },
+                {
+                  label: "Logout",
+                  onClick: () => {
+                    logout();
+                    navigate("/login");
+                  },
+                  type: "primary",
+                },
+              ]
+            : [
+                {
+                  label: "Login",
+                  onClick: () => navigate("/login"),
+                  type: "primary",
+                },
+              ]
+        }
       />
       {/* Home */}
       <Grid container spacing={3} mx={{ xs: 2, sm: 4 }} mt={{ xs: 4, md: 8 }}>

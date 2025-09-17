@@ -6,7 +6,6 @@ const API = axios.create({
 });
 
 export const login = async (email: string, password: string) => {
-  // format as x-www-form-urlencoded
   const formData = new URLSearchParams();
   formData.append("admin_email", email);
   formData.append("admin_password", password);
@@ -21,3 +20,5 @@ export const login = async (email: string, password: string) => {
 
   return { user: adminRecord };
 };
+
+export const signup = async () => {};

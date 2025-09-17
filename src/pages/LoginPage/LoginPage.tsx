@@ -1,9 +1,11 @@
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { loginSchema } from "../../components/MySchema";
+import { login } from "../../services/ApiServices";
 import loginSvg from "../../assets/login.svg";
+import * as yup from "yup";
 import {
   Container,
   Grid,
@@ -12,34 +14,26 @@ import {
   Typography,
   Alert,
 } from "@mui/material";
-import {login} from "../../services/ApiServices";
 import Navbar from "../../components/common/Navbar";
 import MyTextField from "../../components/common/MyTextField";
 import PrimaryButton from "../../components/common/PrimaryButton";
+import CustomSnackbar from "../../components/common/CustomSnackBar";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
-const schema = yup.object().shape({
-  email: yup
-    .string()
-    .email("Invalid email format")
-    .required("Email is required"),
-  password: yup
-    .string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Password is required"),
-});
-type FormData = yup.InferType<typeof schema>;
+export type FormData = yup.InferType<typeof loginSchema>;
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [shouldNavigate, setShouldNavigate] = useState(false);
   const { control, handleSubmit } = useForm<FormData>({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
-
-  const navigate = useNavigate();
-  const [errorMessage, setErrorMessage] = useState("");
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -47,13 +41,22 @@ const LoginPage = () => {
 
       if (response) {
         console.log("Login successful:", response);
-        navigate("/dashboard");
+        localStorage.setItem("authToken", response.user["admin_password"]);
+
+        setSnackbarOpen(true);
+        setShouldNavigate(true);
       } else {
         setErrorMessage(response || "Invalid login");
       }
-    } catch (err: any) {
-      setErrorMessage("Something went wrong. Please try again.");
-      console.error(err);
+    } catch (err: unknown) {
+      setErrorMessage(err + "");
+    }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+    if (shouldNavigate) {
+      navigate("/dashboard");
     }
   };
 
@@ -91,9 +94,9 @@ const LoginPage = () => {
 
           {/* Right Form */}
           <Grid size={{ xs: 12, md: 6 }}>
-            <Card sx={{ color: "white", borderRadius: 3, boxShadow: 3 }}>
+            <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
               <CardContent sx={{ p: 4 }}>
-                <Typography variant="h5" align="center" gutterBottom>
+                <Typography variant="h4" align="center" fontWeight={600}>
                   Login
                 </Typography>
 
@@ -102,14 +105,12 @@ const LoginPage = () => {
                     name="email"
                     placeholder="Email"
                     control={control}
-                    label="Email"
                     type="email"
                   />
                   <MyTextField
                     name="password"
                     placeholder="Password"
                     control={control}
-                    label="Password"
                     type="password"
                   />
 
@@ -130,6 +131,15 @@ const LoginPage = () => {
           </Grid>
         </Grid>
       </Container>
+
+      {/* ✅ Snackbar for success */}
+      <CustomSnackbar
+        open={snackbarOpen}
+        onClose={handleSnackbarClose}
+        message="Login successful!"
+        icon={<CheckCircleIcon fontSize="inherit" />}
+        color="success"
+      />
     </>
   );
 };
