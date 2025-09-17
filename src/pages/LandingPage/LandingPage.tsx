@@ -1,14 +1,20 @@
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Box, Grid, Typography } from "@mui/material";
-import BadgeRoundedIcon from "@mui/icons-material/BadgeRounded";
 import Navbar from "../../components/common/Navbar";
 import PrimaryButton from "../../components/common/PrimaryButton";
 import ServiceDetailsCard from "../../components/ServiceDetailsCard";
+import DynamicIcon from "../../components/DynamicIcon";
+import { TipsAndUpdatesRounded } from "@mui/icons-material";
 
 function LandingPage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const content = t("services.content", { returnObjects: true }) as Array<{
+    icon: string;
+    title: string;
+    subtitle: string;
+  }>;
 
   return (
     <>
@@ -27,24 +33,34 @@ function LandingPage() {
           },
         ]}
       />
-
       {/* Home */}
-      <Grid container columns={12} mx={4} mt={8} columnSpacing={3}>
-        <Grid size={6} py={4}>
-          <Typography fontWeight={600} fontSize={50}>
+      <Grid container spacing={3} mx={{ xs: 2, sm: 4 }} mt={{ xs: 4, md: 8 }}>
+        {/* Left side */}
+        <Grid size={{ xs: 12, md: 6 }} py={4}>
+          <Typography fontWeight={600} fontSize={{ xs: 32, sm: 40, md: 50 }}>
             {t("home.title")}
           </Typography>
-          <Typography variant="h5" color="grey.500" py={4}>
+          <Typography variant="h6" color="grey.500" py={4}>
             {t("home.subtitle")}
           </Typography>
           <PrimaryButton
             label="Get Started"
             onClick={() => navigate("/login")}
-            sx={{ px: 12, fontSize: 20 }}
+            sx={{ px: { xs: 6, sm: 10, md: 12 }, fontSize: { xs: 16, md: 20 } }}
           />
         </Grid>
-        <Grid size={6} justifyContent="center" display="flex">
-          <BadgeRoundedIcon sx={{ fontSize: 300 }} />
+
+        {/* Right side */}
+        <Grid
+          size={{ xs: 12, md: 6 }}
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          mt={{ xs: 4, md: 0 }}
+        >
+          <TipsAndUpdatesRounded
+            sx={{ fontSize: { xs: "120px", sm: "180px", md: "225px" } }}
+          />
         </Grid>
       </Grid>
 
@@ -68,11 +84,18 @@ function LandingPage() {
         >
           {t("services.subtitle")}
         </Typography>
-        <ServiceDetailsCard
-          icon="B"
-          title="{item.title}"
-          subtitle="{item.subtitle}"
-        />
+
+        <Grid container spacing={2}>
+          {content.map((item, index) => (
+            <Grid key={index} size={{ xs: 12, md: 4 }}>
+              <ServiceDetailsCard
+                icon={<DynamicIcon name={item.icon} />}
+                title={item.title}
+                subtitle={item.subtitle}
+              />
+            </Grid>
+          ))}
+        </Grid>
       </Box>
     </>
   );

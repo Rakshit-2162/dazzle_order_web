@@ -1,5 +1,4 @@
-import { Box, Card, Typography } from "@mui/material";
-
+import { Box, Card, Typography, useTheme } from "@mui/material";
 interface ServiceDetailsCardProps {
   icon: React.ReactNode; // you can pass an MUI Icon or any JSX
   title: string;
@@ -11,8 +10,9 @@ const ServiceDetailsCard = ({
   title,
   subtitle,
 }: ServiceDetailsCardProps) => {
+  const theme = useTheme();
   return (
-    <Box sx={{ width: { xs: "100%", sm: "50%", md: "33.33%" }, p: 1 }}>
+    <Box sx={{ p: 1 }}>
       <Card
         sx={{
           borderRadius: 4, // rounded-4
@@ -20,7 +20,7 @@ const ServiceDetailsCard = ({
           p: 4,
           mb: 3,
           backgroundColor: "#212434",
-          color: "white",
+          color: theme.palette.mode === "light" ? "white" : "",
         }}
       >
         {/* Icon Circle */}
@@ -47,7 +47,7 @@ const ServiceDetailsCard = ({
         </Typography>
 
         {/* Subtitle */}
-        <Typography sx={{ color: "grey.500", pt: 1 }}>{subtitle}</Typography>
+        <Typography sx={{ pt: 1 }}>{subtitle}</Typography>
       </Card>
     </Box>
   );
