@@ -1,0 +1,48 @@
+{
+  "home": {
+    "title": "Elevate Your Bathroom with Style & Functionality",
+    "subtitle": "Premium bathroom accessories that combine elegance, durability, and convenience - from towel racks to soap dishes, everything you need for a complete bathroom."
+  },
+  "services": {
+    "title": "We Provide Quality Bathroom Essentials",
+    "subtitle": "Our products are crafted with care, combining practicality and modern design to give your bathroom the upgrade it deserves.",
+    "content": [
+      {
+        "icon": "AutoFixHighRounded",
+        "title": "Elegant Designs",
+        "subtitle": "Upgrade your bathroom with stylish accessories that blend seamlessly with any décor."
+      },
+      {
+        "icon": "Handyman",
+        "title": "Easy Installation",
+        "subtitle": "Our products are designed for hassle-free setup, so you can enhance your bathroom without extra effort."
+      },
+      {
+        "icon": "VerifiedUser",
+        "title": "Built to Last",
+        "subtitle": "Made with high-quality materials, our accessories ensure durability, strength, and long-term reliability."
+      }
+    ]
+  },
+  "features": {
+    "title": "Explore Our Featured Accessories",
+    "subtitle": "From essentials to stylish upgrades, discover bathroom accessories that make your daily routine easier and more enjoyable.",
+    "content": [
+      {
+        "image": "",
+        "title": "Towel Racks",
+        "subtitle": "Neat, organized, and stylish."
+      },
+      {
+        "image": "",
+        "title": "Soap Dishes",
+        "subtitle": "Clean, simple, and practical."
+      },
+      {
+        "image": "",
+        "title": "Toothbrush Holders",
+        "subtitle": "Hygienic and space-saving."
+      }
+    ]
+  }
+}
