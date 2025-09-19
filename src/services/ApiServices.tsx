@@ -1,7 +1,10 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://dazzle-order.store/api_dazzle_order",
+  baseURL:
+    import.meta.env.MODE === "development"
+      ? "/api" // local dev proxy
+      : import.meta.env.VITE_API_URL, // production
   headers: { "Content-Type": "application/x-www-form-urlencoded" },
 });
 

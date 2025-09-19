@@ -10,7 +10,7 @@ import App from "./App.tsx";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
-      <BrowserRouter basename="/dazzle_order_web">
+      <BrowserRouter basename={import.meta.env.VITE_BASE_URL}>
         <App />
       </BrowserRouter>
     </Provider>
