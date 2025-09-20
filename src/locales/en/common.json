@@ -44,5 +44,19 @@
         "subtitle": "Hygienic and space-saving."
       }
     ]
-  }
+  },
+  "dashboard": [
+    {
+      "icon": "",
+      "title": "",
+      "subtitle": "",
+      "route": ""
+    },
+    {
+      "icon": "",
+      "title": "",
+      "subtitle": "",
+      "route": ""
+    }
+  ]
 }
