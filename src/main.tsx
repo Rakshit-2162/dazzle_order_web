@@ -7,14 +7,12 @@ import "./index.css";
 import "./i18n.ts";
 import App from "./App.tsx";
 
+const isProd = import.meta.env.PROD;
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
-      <BrowserRouter
-        basename={
-          process.env.NODE_ENV === "production" ? "/dazzle_order_web" : "/"
-        }
-      >
+      <BrowserRouter basename={isProd ? "/dazzle_order_web/" : "/"}>
         <App />
       </BrowserRouter>
     </Provider>
