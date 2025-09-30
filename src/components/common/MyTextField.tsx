@@ -1,4 +1,5 @@
-import { TextField, useTheme } from "@mui/material";
+import { InputAdornment, TextField, useTheme } from "@mui/material";
+import type { ReactNode } from "react";
 import { Controller } from "react-hook-form";
 
 interface MyTextFieldProps {
@@ -13,7 +14,9 @@ interface MyTextFieldProps {
   size?: "small" | "medium";
   disabled?: boolean;
   multiline?: boolean;
+  borderRadius?: number;
   rows?: number;
+  startIcon?: ReactNode;
 }
 
 const MyTextField = ({
@@ -27,7 +30,10 @@ const MyTextField = ({
   size = "medium",
   disabled = false,
   multiline = false,
+  borderRadius = 3,
   rows,
+  label,
+  startIcon,
 }: MyTextFieldProps) => {
   const theme = useTheme();
 
@@ -39,6 +45,7 @@ const MyTextField = ({
         <TextField
           {...field}
           type={type}
+          label={label}
           placeholder={placeholder}
           fullWidth={fullWidth}
           variant={variant}
@@ -49,11 +56,16 @@ const MyTextField = ({
           rows={rows}
           error={!!error}
           helperText={error ? error.message : ""}
+          InputProps={{
+            startAdornment: startIcon ? (
+              <InputAdornment position="start">{startIcon}</InputAdornment>
+            ) : undefined,
+          }}
           sx={{
             bgcolor: theme.palette.mode === "dark" ? "#101624" : "#ECECEC",
-            borderRadius: 3,
+            borderRadius: borderRadius,
             "& .MuiOutlinedInput-root": {
-              borderRadius: 3,
+              borderRadius: borderRadius,
               "& fieldset": {
                 borderColor: "transparent", // remove border
               },

@@ -40,11 +40,6 @@ function LandingPage() {
               ]
             : [
                 {
-                  label: "Dashboard",
-                  onClick: () => navigate("/dashboard"),
-                  type: "text",
-                },
-                {
                   label: "Login",
                   onClick: () => navigate("/login"),
                   type: "primary",

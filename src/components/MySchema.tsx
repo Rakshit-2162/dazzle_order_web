@@ -30,3 +30,12 @@ export const signUpSchema = yup.object().shape({
     .oneOf([yup.ref("password")], "Passwords must match")
     .required("Confirm Password is required"),
 });
+
+export const searchSchema = yup.object().shape({
+  search: yup.string().required("Type something here...!"),
+});
+
+export const createPurchaseOrderSchema = yup.object({
+  distributor_id: yup.string().required("Distributor is required"),
+  remarks: yup.string().required(),
+});

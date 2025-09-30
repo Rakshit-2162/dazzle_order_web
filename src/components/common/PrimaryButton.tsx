@@ -2,14 +2,15 @@ import Button from "@mui/material/Button";
 import type { ButtonProps } from "@mui/material/Button";
 
 type Props = ButtonProps & {
-  label?: string;
+  label: string;
 };
 
-const PrimaryButton = ({ label, children, sx, ...props }: Props) => {
+const PrimaryButton = ({ label, children, sx, startIcon, ...props }: Props) => {
   return (
     <Button
       variant="contained"
       color="primary"
+      startIcon={startIcon}
       sx={{
         borderRadius: 8,
         textTransform: "none",

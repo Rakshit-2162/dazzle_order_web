@@ -47,16 +47,17 @@
   },
   "dashboard": [
     {
-      "icon": "",
-      "title": "",
-      "subtitle": "",
-      "route": ""
+      "icon": "ListAltRounded",
+      "title": "My Purchase Orders",
+      "subtitle": "Track and manage your purchase orders",
+      "route": "viewAllPurchaseOrders"
     },
     {
-      "icon": "",
-      "title": "",
-      "subtitle": "",
-      "route": ""
+      "icon": "PersonRounded",
+      "title": "My Account",
+      "subtitle": "Update your personal details and settings",
+      "route": "myAccount"
     }
-  ]
+  ],
+  "addOrderItemsSteps": ["Select Items", "Review Items"]
 }

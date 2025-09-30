@@ -1,10 +1,9 @@
-// models/User.ts
 export interface User {
-  id?: string;         // optional, when creating new user
+  id?: string;
   name: string;
   email: string;
   password: string;
-  role?: "admin" | "user"; // optional, based on your app
-  createdAt?: string;  // backend will set
-  updatedAt?: string;  // backend will set
+  role?: "admin" | "user";
+  createdAt?: string;
+  updatedAt?: string;
 }

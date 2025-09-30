@@ -1,4 +1,4 @@
-import { createContext, useMemo, useState } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 import { createTheme } from "@mui/material/styles";
 
 /**
@@ -132,8 +132,16 @@ export const ColorModeContext = createContext({
 /**
  * 🔄 Custom Hook to Use Mode
  */
+
 export const useMode = () => {
-  const [mode, setMode] = useState<"light" | "dark">("dark");
+  // Load initial mode from sessionStorage or default to dark
+  const [mode, setMode] = useState<"light" | "dark">(
+    () => (sessionStorage.getItem("themeMode") as "light" | "dark") || "dark"
+  );
+
+  useEffect(() => {
+    sessionStorage.setItem("themeMode", mode);
+  }, [mode]);
 
   const colorMode = useMemo(
     () => ({

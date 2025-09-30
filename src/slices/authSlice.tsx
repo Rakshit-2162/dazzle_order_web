@@ -9,7 +9,7 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  token: localStorage.getItem("token"),
+  token: localStorage.getItem("authToken"),
   user: null,
   loading: false,
   error: null,
@@ -30,7 +30,7 @@ const authSlice = createSlice({
       state.loading = false;
       state.token = action.payload.token;
       state.user = action.payload.user;
-      localStorage.setItem("token", action.payload.token);
+      localStorage.setItem("authToken", action.payload.token);
     },
     loginFailure: (state, action: PayloadAction<string>) => {
       state.loading = false;
@@ -39,7 +39,7 @@ const authSlice = createSlice({
     logout: (state) => {
       state.token = null;
       state.user = null;
-      localStorage.removeItem("token");
+      localStorage.removeItem("authToken");
     },
   },
 });

@@ -31,7 +31,9 @@ function Navbar({ buttons = [] }: NavbarProps) {
   return (
     <>
       <AppBar position="static" color="transparent" elevation={0}>
-        <Toolbar sx={{ display: "flex", justifyContent: "space-between", px: 2 }}>
+        <Toolbar
+          sx={{ display: "flex", justifyContent: "space-between", px: 2 }}
+        >
           {/* Left: Logo */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <img src={logo} alt="App Logo" style={{ height: 40 }} />
@@ -41,7 +43,11 @@ function Navbar({ buttons = [] }: NavbarProps) {
           {isMobile ? (
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <ThemeToggle />
-              <IconButton edge="end" color="inherit" onClick={() => setMenuOpen(!menuOpen)}>
+              <IconButton
+                edge="end"
+                color="inherit"
+                onClick={() => setMenuOpen(!menuOpen)}
+              >
                 {menuOpen ? <CloseIcon /> : <MenuIcon />}
               </IconButton>
             </Box>
@@ -49,9 +55,17 @@ function Navbar({ buttons = [] }: NavbarProps) {
             <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
               {buttons.map((btn, index) =>
                 btn.type === "primary" ? (
-                  <PrimaryButton key={index} label={btn.label} onClick={btn.onClick} />
+                  <PrimaryButton
+                    key={index}
+                    label={btn.label}
+                    onClick={btn.onClick}
+                  />
                 ) : (
-                  <TextButton key={index} label={btn.label} onClick={btn.onClick} />
+                  <TextButton
+                    key={index}
+                    label={btn.label}
+                    onClick={btn.onClick}
+                  />
                 )
               )}
               <ThemeToggle />

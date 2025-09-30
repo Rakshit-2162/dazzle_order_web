@@ -19,7 +19,6 @@ import MyTextField from "../../components/common/MyTextField";
 import PrimaryButton from "../../components/common/PrimaryButton";
 import CustomSnackbar from "../../components/common/CustomSnackBar";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import type { FormData } from "../LoginPage/LoginPage";
 
 type FormData = yup.InferType<typeof signUpSchema>;
 
@@ -64,15 +63,7 @@ function SignUpPage() {
 
   return (
     <>
-      <Navbar
-        buttons={[
-          {
-            label: "Login",
-            onClick: () => navigate("/login"),
-            type: "primary",
-          },
-        ]}
-      />
+      <Navbar />
 
       {/* Sign Up Form */}
       <Container

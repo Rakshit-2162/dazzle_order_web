@@ -2,9 +2,6 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginSchema } from "../../components/MySchema";
-import { login } from "../../services/ApiServices";
-import loginSvg from "../../assets/login.svg";
 import * as yup from "yup";
 import {
   Container,
@@ -14,13 +11,16 @@ import {
   Typography,
   Alert,
 } from "@mui/material";
+import { loginSchema } from "../../components/MySchema";
+import { login } from "../../services/ApiServices";
+import loginSvg from "../../assets/login.svg";
 import Navbar from "../../components/common/Navbar";
 import MyTextField from "../../components/common/MyTextField";
 import PrimaryButton from "../../components/common/PrimaryButton";
 import CustomSnackbar from "../../components/common/CustomSnackBar";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
-export type FormData = yup.InferType<typeof loginSchema>;
+type FormData = yup.InferType<typeof loginSchema>;
 
 const LoginPage = () => {
   const navigate = useNavigate();
