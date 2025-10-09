@@ -98,11 +98,26 @@ export const themeSettings = (mode: "light" | "dark") => {
       h4: { fontFamily: "Poppins, sans-serif", fontSize: 20, fontWeight: 500 },
       h5: { fontFamily: "Poppins, sans-serif", fontSize: 16, fontWeight: 500 },
       h6: { fontFamily: "Poppins, sans-serif", fontSize: 14, fontWeight: 400 },
-      body1: { fontFamily: "Poppins, sans-serif", fontSize: 14, fontWeight: 400 },
-      body2: { fontFamily: "Poppins, sans-serif", fontSize: 12, fontWeight: 300 },
+      body1: {
+        fontFamily: "Poppins, sans-serif",
+        fontSize: 14,
+        fontWeight: 400,
+      },
+      body2: {
+        fontFamily: "Poppins, sans-serif",
+        fontSize: 12,
+        fontWeight: 300,
+      },
     },
 
     components: {
+      MuiAlert: {
+        styleOverrides: {
+          message: {
+            fontSize: 14,
+          },
+        },
+      },
       MuiCssBaseline: {
         styleOverrides: {
           body: {

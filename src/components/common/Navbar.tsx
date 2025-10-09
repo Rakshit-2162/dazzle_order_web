@@ -30,7 +30,11 @@ function Navbar({ buttons = [] }: NavbarProps) {
 
   return (
     <>
-      <AppBar position="static" color="transparent" elevation={0}>
+      <AppBar
+        position="fixed"
+        color={theme.palette.mode === "dark" ? "default" : "inherit"}
+        elevation={0}
+      >
         <Toolbar
           sx={{ display: "flex", justifyContent: "space-between", px: 2 }}
         >

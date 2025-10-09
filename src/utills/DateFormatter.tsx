@@ -8,3 +8,12 @@ export function formatDateTime(date: Date): string {
 
   return `${day}/${month}/${year} ${hours}:${minutes}`;
 }
+
+export function formatToIST(utcDateString: Date) {
+  return utcDateString.toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+}

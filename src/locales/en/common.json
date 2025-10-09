@@ -53,6 +53,12 @@
       "route": "viewAllPurchaseOrders"
     },
     {
+      "icon": "ContactsRounded",
+      "title": "My Distributors",
+      "subtitle": "Manage your distributors",
+      "route": "viewMyDistributors"
+    },
+    {
       "icon": "PersonRounded",
       "title": "My Account",
       "subtitle": "Update your personal details and settings",

@@ -71,10 +71,17 @@ export const APIRoutes = {
     createOrder: `${HOST_CONNECTION}/purchase_order_master/create_purchase_order.php`,
     fetchAllOrders: `${HOST_CONNECTION}/purchase_order_master/fetch_all_purchase_orders.php`,
     fetchOrderByID: `${HOST_CONNECTION}/purchase_order_master/fetch_order_by_id.php`,
+    deleteOrderByID: `${HOST_CONNECTION}/purchase_order_master/delete_order_by_id.php`,
+    updateOrderByID: `${HOST_CONNECTION}/purchase_order_master/update_order_by_id.php`,
   },
 
   // ------ PURCHASE ORDER ITEM ------
-  purchaseOrderItem: {},
+  purchaseOrderItem: {
+    addOrderItems: `${HOST_CONNECTION}/purchase_order_items/add_order_items.php`,
+    fetchOrderItemsById: `${HOST_CONNECTION}/purchase_order_items/fetch_order_items_by_id.php`,
+    updateOrderItem: `${HOST_CONNECTION}/purchase_order_items/update_order_item.php`,
+    deleteOrderItem: `${HOST_CONNECTION}/purchase_order_items/delete_order_item.php`,
+  },
 
   // ------ STATUS ------
   status: {

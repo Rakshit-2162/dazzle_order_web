@@ -1,17 +1,18 @@
-import React, { useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useState, useRef } from "react";
 import {
   Box,
   TextField,
-  IconButton,
   Typography,
-  Collapse,
   Paper,
+  IconButton,
   useTheme,
 } from "@mui/material";
-import { ExpandMore, ChevronRight, Check, Close } from "@mui/icons-material";
-import ShoppingCartRoundedIcon from "@mui/icons-material/ShoppingCartRounded";
+import { Check, Close } from "@mui/icons-material";
 import type { Product } from "../../../models/Product";
 import type { PurchaseOrderItemJSON } from "../../../models/PurchaseOrderItem";
+import { showSnackbar } from "../../../services/snackbarService";
+import { ErrorOutlineRounded, TaskAltRounded } from "@mui/icons-material";
 
 interface StepSelectOrderItemsProps {
   products_list: Product[];
@@ -27,210 +28,152 @@ export default function StepSelectOrderItems({
   setCart,
 }: StepSelectOrderItemsProps) {
   const theme = useTheme();
-  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
-  const [editingProduct, setEditingProduct] = useState<number | null>(null);
-  const [quantities, setQuantities] = useState<Record<number, string>>({});
+  const [searchCode, setSearchCode] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [qty, setQty] = useState("");
+  const qtyInputRef = useRef<HTMLInputElement>(null);
+  const codeInputRef = useRef<HTMLInputElement>(null);
 
-  // Group products by category
-  const groupedProducts = products_list.reduce(
-    (acc, product) => {
-      if (!acc[product.categoryName]) {
-        acc[product.categoryName] = [];
+  // Handle when user presses Enter in code field
+  const handleCodeEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && searchCode.trim() !== "") {
+      const found = products_list.find(
+        (p) => p.productCode.toLowerCase() === searchCode.trim().toLowerCase()
+      );
+
+      if (found) {
+        setSelectedProduct(found);
+        setQty("");
+        setTimeout(() => qtyInputRef.current?.focus(), 100);
+      } else {
+        showSnackbar("Product not found", "error", <ErrorOutlineRounded />);
       }
-      acc[product.categoryName].push(product);
-      return acc;
-    },
-    {} as Record<string, Product[]>
-  );
-
-  const toggleCategory = (categoryName: string) => {
-    setExpandedCategories((prev) =>
-      prev.includes(categoryName)
-        ? prev.filter((c) => c !== categoryName)
-        : [...prev, categoryName]
-    );
-  };
-
-  const handleAddToCart = (productId: number, e: React.MouseEvent) => {
-    e.stopPropagation();
-    const existingQty = getCartQuantity(productId);
-    setEditingProduct(productId);
-    setQuantities((prev) => ({ 
-      ...prev, 
-      [productId]: existingQty > 0 ? String(existingQty) : "1" 
-    }));
-  };
-
-  const handleConfirmQuantity = (productId: number, e: React.MouseEvent) => {
-    e.stopPropagation();
-    const qty = parseInt(quantities[productId] || "1");
-    if (qty > 0) {
-      setCart((prev) => {
-        const existing = prev.find((item) => item.product_id === productId);
-        if (existing) {
-          return prev.map((item) =>
-            item.product_id === productId ? { ...item, qty: qty } : item
-          );
-        }
-        return [...prev, { order_id: order_id, product_id: productId, qty: qty }];
-      });
     }
-    setEditingProduct(null);
   };
 
-  const handleCancelQuantity = (productId: number, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setEditingProduct(null);
-    setQuantities((prev) => {
-      const newQty = { ...prev };
-      delete newQty[productId];
-      return newQty;
-    });
-  };
+  // Handle when user presses Enter in qty field
+  const handleQtyEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && selectedProduct && Number(qty) > 0) {
+      const existing = cart.find(
+        (item) => item.product_id === selectedProduct.productId
+      );
+      if (existing) {
+        // update qty
+        setCart((prev) =>
+          prev.map((item) =>
+            item.product_id === selectedProduct.productId
+              ? { ...item, qty: Number(qty) }
+              : item
+          )
+        );
+        showSnackbar("Quantity updated", "success", <TaskAltRounded />);
+      } else {
+        setCart((prev) => [
+          ...prev,
+          { order_id, product_id: selectedProduct.productId, qty: Number(qty) },
+        ]);
+        showSnackbar("Product added to cart", "success", <TaskAltRounded />);
+      }
 
-  const getCartQuantity = (productId: number) => {
-    return cart.find((item) => item.product_id === productId)?.qty || 0;
+      // Reset for next entry
+      setSelectedProduct(null);
+      setSearchCode("");
+      setQty("");
+      setTimeout(() => codeInputRef.current?.focus(), 100);
+    }
   };
 
   return (
     <Box sx={{ m: 2, width: "100%" }}>
       <Typography variant="h5" mb={2}>
-        Select Products
+        Add Products by Code
       </Typography>
 
-      <Paper elevation={3} sx={{ borderRadius: 3 }}>
-        {Object.entries(groupedProducts).map(
-          ([categoryName, products], index) => (
-            <Box
-              key={categoryName}
-              sx={{
-                borderBottom:
-                  index !== Object.entries(groupedProducts).length - 1 ? 1 : 0,
-                borderColor: "divider",
-                width: "100%",
-              }}
-            >
-              {/* Category Header */}
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  p: 2,
-                  cursor: "pointer",
-                  "&:hover": { bgcolor: "action.hover" },
-                }}
-                onClick={() => toggleCategory(categoryName)}
-              >
-                {expandedCategories.includes(categoryName) ? (
-                  <ExpandMore sx={{ mr: 1, color: "text.secondary" }} />
-                ) : (
-                  <ChevronRight sx={{ mr: 1, color: "text.secondary" }} />
-                )}
-                <Typography variant="subtitle1" fontWeight="bold">
-                  {categoryName}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ ml: 1 }}
-                >
-                  ({products.length} products)
-                </Typography>
-              </Box>
+      <Paper
+        elevation={3}
+        sx={{
+          borderRadius: 3,
+          p: 3,
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+        }}
+      >
+        {/* Product Code Input */}
+        <TextField
+          inputRef={codeInputRef}
+          label="Enter Product Code"
+          value={searchCode}
+          onChange={(e) => setSearchCode(e.target.value)}
+          onKeyDown={handleCodeEnter}
+          placeholder="Type or scan product code"
+          fullWidth
+        />
 
-              {/* Products List */}
-              <Collapse in={expandedCategories.includes(categoryName)}>
-                <Box>
-                  {products.map((product) => (
-                    <Box
-                      key={product.productId}
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        p: 2,
-                        pl: 6,
-                        borderTop: 1,
-                        borderColor: "divider",
-                        "&:hover": { bgcolor: "background.paper" },
-                      }}
-                    >
-                      {/* Product Info */}
-                      <Box sx={{ flexGrow: 1, ml: 1, mx: 2 }}>
-                        <Typography variant="body1" fontWeight="medium">
-                          {product.productName}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          Code: {product.productCode} | Size:{" "}
-                          {product.productSize}
-                        </Typography>
-                      </Box>
-
-                      {/* Cart Actions */}
-                      {editingProduct === product.productId ? (
-                        <Box
-                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                        >
-                          <TextField
-                            size="small"
-                            type="number"
-                            value={quantities[product.productId] || ""}
-                            onChange={(e) =>
-                              setQuantities((prev) => ({
-                                ...prev,
-                                [product.productId]: e.target.value,
-                              }))
-                            }
-                            onClick={(e) => e.stopPropagation()}
-                            inputProps={{ min: 1 }}
-                            sx={{ width: "80px" }}
-                            placeholder="Qty"
-                          />
-                          <IconButton
-                            color="success"
-                            onClick={(e) =>
-                              handleConfirmQuantity(product.productId, e)
-                            }
-                          >
-                            <Check />
-                          </IconButton>
-                          <IconButton
-                            color="error"
-                            onClick={(e) =>
-                              handleCancelQuantity(product.productId, e)
-                            }
-                          >
-                            <Close />
-                          </IconButton>
-                        </Box>
-                      ) : (
-                        <Box
-                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                        >
-                          {getCartQuantity(product.productId) > 0 && (
-                            <Typography variant="body2" fontWeight="bold">
-                              Qty: {getCartQuantity(product.productId)}
-                            </Typography>
-                          )}
-                          <IconButton
-                            color={
-                              theme.palette.mode === "dark"
-                                ? "inherit"
-                                : "primary"
-                            }
-                            onClick={(e) =>
-                              handleAddToCart(product.productId, e)
-                            }
-                          >
-                            <ShoppingCartRoundedIcon />
-                          </IconButton>
-                        </Box>
-                      )}
-                    </Box>
-                  ))}
-                </Box>
-              </Collapse>
+        {/* If product found, show details and quantity input */}
+        {selectedProduct && (
+          <Box
+            sx={{
+              p: 2,
+              borderRadius: 2,
+              bgcolor:
+                theme.palette.mode === "dark"
+                  ? "rgba(255,255,255,0.05)"
+                  : "grey.100",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 2,
+            }}
+          >
+            <Box>
+              <Typography variant="body1" fontWeight="bold">
+                {selectedProduct.productName}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Code: {selectedProduct.productCode} | Size:{" "}
+                {selectedProduct.productSize}
+              </Typography>
             </Box>
-          )
+
+            <Box display="flex" alignItems="center" gap={1}>
+              <TextField
+                label="Qty"
+                size="small"
+                type="number"
+                inputRef={qtyInputRef}
+                value={qty}
+                onChange={(e) => setQty(e.target.value)}
+                onKeyDown={handleQtyEnter}
+                inputProps={{ min: 1 }}
+                sx={{ width: 90 }}
+              />
+              <IconButton
+                color="success"
+                onClick={() => {
+                  if (Number(qty) > 0 && selectedProduct) {
+                    handleQtyEnter({
+                      key: "Enter",
+                      preventDefault: () => {},
+                    } as any);
+                  }
+                }}
+              >
+                <Check />
+              </IconButton>
+              <IconButton
+                color="error"
+                onClick={() => {
+                  setSelectedProduct(null);
+                  setSearchCode("");
+                  setQty("");
+                  setTimeout(() => codeInputRef.current?.focus(), 100);
+                }}
+              >
+                <Close />
+              </IconButton>
+            </Box>
+          </Box>
         )}
       </Paper>
 
@@ -246,7 +189,7 @@ export default function StepSelectOrderItems({
             );
             return (
               <Typography key={item.product_id} variant="body2">
-                • {product?.productName} ({product?.categoryName}) - Qty:{" "}
+                • {product?.productName} ({product?.productCode}) - Qty:{" "}
                 {item.qty}
               </Typography>
             );

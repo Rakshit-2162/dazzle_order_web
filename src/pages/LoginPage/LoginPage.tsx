@@ -17,16 +17,15 @@ import loginSvg from "../../assets/login.svg";
 import Navbar from "../../components/common/Navbar";
 import MyTextField from "../../components/common/MyTextField";
 import PrimaryButton from "../../components/common/PrimaryButton";
-import CustomSnackbar from "../../components/common/CustomSnackBar";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { showSnackbar } from "../../services/snackbarService";
+import { TaskAltRounded } from "@mui/icons-material";
+import { delay } from "../../utills/delay";
 
 type FormData = yup.InferType<typeof loginSchema>;
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [shouldNavigate, setShouldNavigate] = useState(false);
   const { control, handleSubmit } = useForm<FormData>({
     resolver: yupResolver(loginSchema),
     defaultValues: {
@@ -42,21 +41,14 @@ const LoginPage = () => {
       if (response) {
         console.log("Login successful:", response);
         localStorage.setItem("authToken", response.user["admin_password"]);
-
-        setSnackbarOpen(true);
-        setShouldNavigate(true);
+        showSnackbar("Login successful", 'success', <TaskAltRounded />)
+        await delay(3000);
+        navigate('/dashboard');
       } else {
         setErrorMessage(response || "Invalid login");
       }
     } catch (err: unknown) {
       setErrorMessage(err + "");
-    }
-  };
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-    if (shouldNavigate) {
-      navigate("/dashboard");
     }
   };
 
@@ -131,15 +123,6 @@ const LoginPage = () => {
           </Grid>
         </Grid>
       </Container>
-
-      {/* ✅ Snackbar for success */}
-      <CustomSnackbar
-        open={snackbarOpen}
-        onClose={handleSnackbarClose}
-        message="Login successful!"
-        icon={<CheckCircleIcon fontSize="inherit" />}
-        color="success"
-      />
     </>
   );
 };

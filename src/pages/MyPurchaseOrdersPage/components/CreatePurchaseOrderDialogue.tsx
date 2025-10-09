@@ -23,6 +23,8 @@ import {
   createPurchaseOrder,
   fetchAllDistributors,
 } from "../../../services/ApiServices";
+import { showSnackbar } from "../../../services/snackbarService";
+import { ErrorOutlineRounded, TaskAltRounded } from "@mui/icons-material";
 
 // ------------------ TypeScript Form Type ------------------
 interface FormData {
@@ -48,7 +50,7 @@ function CreatePurchaseOrderDialogue({
     resolver: yupResolver(createPurchaseOrderSchema),
     defaultValues: {
       distributor_id: "",
-      remarks: "NA",
+      remarks: "",
     },
   });
 
@@ -57,10 +59,14 @@ function CreatePurchaseOrderDialogue({
     if (open) {
       fetchAllDistributors()
         .then((data) => {
-          setDistributors(data);
+          setDistributors(data ?? []);
         })
         .catch((error) => {
-          console.error("Error fetching distributors:", error);
+          showSnackbar(
+            `Error fetching distributors: ${error}`,
+            "error",
+            <ErrorOutlineRounded />
+          );
           setDistributors([]);
         });
     } else {
@@ -72,7 +78,7 @@ function CreatePurchaseOrderDialogue({
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     try {
       const purchaseOrderMaster: PurchaseOrderMasterJSON = {
-        order_id: 0, // backend will probably auto-generate
+        order_id: 0,
         distributor_id: data.distributor_id,
         total_qty: 0,
         remarks: data.remarks,
@@ -80,12 +86,16 @@ function CreatePurchaseOrderDialogue({
         dateTimestamp: new Date(),
       };
 
-      const response = await createPurchaseOrder(purchaseOrderMaster);
-      console.log("Order created:", response);
+      await createPurchaseOrder(purchaseOrderMaster);
+      showSnackbar("Order created", "success", <TaskAltRounded />);
 
       onClose();
     } catch (error) {
-      console.error("Error creating purchase order:", error);
+      showSnackbar(
+        `Error creating purchase order: ${error}`,
+        "error",
+        <ErrorOutlineRounded />
+      );
     }
   };
 
@@ -120,8 +130,8 @@ function CreatePurchaseOrderDialogue({
                 MenuProps={{
                   PaperProps: {
                     sx: {
-                      maxHeight: 250, // 🔹 controls dropdown height
-                      borderRadius: 3, // 🔹 rounded corners
+                      maxHeight: 300,
+                      borderRadius: 3,
                     },
                   },
                 }}
@@ -171,7 +181,7 @@ function CreatePurchaseOrderDialogue({
         <MyTextField
           name="remarks"
           control={control}
-          placeholder="Remarks (optional)"
+          placeholder="Remarks"
           type="text"
         />
       </DialogContent>

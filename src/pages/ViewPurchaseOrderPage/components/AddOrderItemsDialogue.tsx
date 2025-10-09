@@ -13,9 +13,18 @@ import CustomStepper from "../../../components/CustomStepper";
 import { useTranslation } from "react-i18next";
 import type { Product } from "../../../models/Product";
 import type { PurchaseOrderItemJSON } from "../../../models/PurchaseOrderItem";
-import { Close } from "@mui/icons-material";
+import {
+  Close,
+  ErrorOutlineRounded,
+  TaskAltRounded,
+  WarningRounded,
+} from "@mui/icons-material";
 import { useEffect, useState } from "react";
-import { fetchAllProducts } from "../../../services/ApiServices";
+import {
+  addPurchaseOrderItems,
+  fetchAllProducts,
+} from "../../../services/ApiServices";
+import { showSnackbar } from "../../../services/snackbarService";
 
 interface AddOrderItemsDialogProps {
   order_id: number;
@@ -23,14 +32,18 @@ interface AddOrderItemsDialogProps {
   onClose: () => void;
 }
 
-const AddOrderItemsDialog = ({ order_id, open, onClose }: AddOrderItemsDialogProps) => {
+const AddOrderItemsDialog = ({
+  order_id,
+  open,
+  onClose,
+}: AddOrderItemsDialogProps) => {
   const { t } = useTranslation();
   const steps = t("addOrderItemsSteps", {
     returnObjects: true,
   }) as string[];
   const [products_list, setProductsList] = useState<Product[]>([]);
   const [, setLoading] = useState(false);
-  
+
   // Lift cart state to parent
   const [cart, setCart] = useState<PurchaseOrderItemJSON[]>([]);
 
@@ -40,7 +53,11 @@ const AddOrderItemsDialog = ({ order_id, open, onClose }: AddOrderItemsDialogPro
       fetchAllProducts()
         .then((products) => setProductsList(products ?? []))
         .catch((err) => {
-          console.error("Error fetching products:", err);
+          showSnackbar(
+            `Error fetching products: ${err}`,
+            "error",
+            <ErrorOutlineRounded />
+          );
           setProductsList([]);
         })
         .finally(() => setLoading(false));
@@ -53,7 +70,7 @@ const AddOrderItemsDialog = ({ order_id, open, onClose }: AddOrderItemsDialogPro
   return (
     <Dialog
       open={open}
-      fullScreen
+      fullWidth 
       maxWidth="lg"
       slotProps={{ paper: { sx: { borderRadius: 4 } } }}
       onClose={(_, reason) => {
@@ -63,9 +80,16 @@ const AddOrderItemsDialog = ({ order_id, open, onClose }: AddOrderItemsDialogPro
       }}
     >
       <DialogTitle>
-        <Stack display={'flex'} justifyContent={'space-between'} direction={'row'} alignItems={'center'}>
+        <Stack
+          display={"flex"}
+          justifyContent={"space-between"}
+          direction={"row"}
+          alignItems={"center"}
+        >
           <Typography variant="h4">Add Order Items</Typography>
-          <IconButton onClick={onClose}><Close /></IconButton>
+          <IconButton onClick={onClose}>
+            <Close />
+          </IconButton>
         </Stack>
       </DialogTitle>
       <DialogContent>
@@ -73,19 +97,54 @@ const AddOrderItemsDialog = ({ order_id, open, onClose }: AddOrderItemsDialogPro
           <CustomStepper
             steps={steps}
             stepContents={[
-              <StepSelectOrderItems 
-                order_id={order_id} 
+              <StepSelectOrderItems
+                order_id={order_id}
                 products_list={products_list}
                 cart={cart}
                 setCart={setCart}
               />,
-              <StepReviewOrderItems 
+              <StepReviewOrderItems
                 order_id={order_id}
                 cart={cart}
                 products_list={products_list}
               />,
             ]}
-            onConfirm={() => console.log("Confirm clicked 🚀", cart)}
+            onConfirm={async () => {
+              try {
+                if (cart.length === 0) {
+                  showSnackbar("Cart is empty", "warning", <WarningRounded />);
+                  return;
+                }
+
+                const itemsWithOrderId = cart.map((item) => ({
+                  ...item,
+                  order_id,
+                }));
+
+                const response = await addPurchaseOrderItems(itemsWithOrderId);
+
+                if (response["status"] === "success") {
+                  showSnackbar(
+                    response["message"],
+                    "success",
+                    <TaskAltRounded />
+                  );
+                  onClose();
+                } else {
+                  showSnackbar(
+                    response["message"],
+                    "error",
+                    <ErrorOutlineRounded />
+                  );
+                }
+              } catch (err) {
+                showSnackbar(
+                  `Failed to add order items: ${err}`,
+                  "error",
+                  <ErrorOutlineRounded />
+                );
+              }
+            }}
           />
         </Box>
       </DialogContent>

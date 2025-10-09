@@ -28,9 +28,9 @@ function StepReviewOrderItems({ order_id, cart, products_list }: StepReviewOrder
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell><strong>Product Name</strong></TableCell>
                 <TableCell><strong>Category</strong></TableCell>
                 <TableCell><strong>Code</strong></TableCell>
+                <TableCell><strong>Product Name</strong></TableCell>
                 <TableCell><strong>Size</strong></TableCell>
                 <TableCell align="right"><strong>Quantity</strong></TableCell>
               </TableRow>
@@ -42,9 +42,9 @@ function StepReviewOrderItems({ order_id, cart, products_list }: StepReviewOrder
                 );
                 return (
                   <TableRow key={item.product_id}>
-                    <TableCell>{product?.productName}</TableCell>
                     <TableCell>{product?.categoryName}</TableCell>
                     <TableCell>{product?.productCode}</TableCell>
+                    <TableCell>{product?.productName}</TableCell>
                     <TableCell>{product?.productSize}</TableCell>
                     <TableCell align="right">{item.qty}</TableCell>
                   </TableRow>

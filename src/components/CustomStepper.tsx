@@ -69,21 +69,20 @@ function CustomStepper({ steps, stepContents, onConfirm }: CustomStepperProps) {
           disabled={activeStep === 0}
           onClick={handleBack}
         />
-        <SecondaryButton
-          label="Next"
-          disabled={activeStep >= steps.length - 1}
-          onClick={handleNext}
-        />
-      </Stack>
-
-      {/* Confirm Button */}
-      <Box mt={2} display="flex" justifyContent="flex-end">
-        <PrimaryButton
-          label="Confirm"
-          disabled={activeStep !== steps.length - 1}
-          onClick={handleConfirm}
-        />
-      </Box>
+        {activeStep === 0 ? (
+          <SecondaryButton
+            label="Next"
+            disabled={activeStep >= steps.length - 1}
+            onClick={handleNext}
+          />
+        ) : (
+          <PrimaryButton
+            label="Confirm"
+            disabled={activeStep !== steps.length - 1}
+            onClick={handleConfirm}
+          />
+        )}
+      </Stack> 
     </Box>
   );
 }

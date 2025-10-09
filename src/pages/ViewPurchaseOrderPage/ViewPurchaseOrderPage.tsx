@@ -5,22 +5,24 @@ import { PurchaseOrderMaster } from "../../models/PurchaseOrderMaster";
 import MasterOrderDetailsTable from "./components/MasterOrderDetailsTable";
 import PrimaryButton from "../../components/common/PrimaryButton";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import LocalPrintshopRoundedIcon from "@mui/icons-material/LocalPrintshopRounded";
 import OrderItemsTable from "./components/OrderItemsTable";
-import {
-  PurchaseOrderItem,
-  type PurchaseOrderItemJSON,
-} from "../../models/PurchaseOrderItem";
 import { useEffect, useState } from "react";
 import AddOrderItemsDialog from "./components/AddOrderItemsDialogue";
-import { fetchPurchaseOrderMasterByID } from "../../services/ApiServices";
+import {
+  fetchPurchaseOrderItemsById,
+  fetchPurchaseOrderMasterByID,
+} from "../../services/ApiServices";
+import type { PurchaseOrderItem } from "../../models/PurchaseOrderItem";
+import { exportToExcel } from "../../utills/csvUtils";
+import { showSnackbar } from "../../services/snackbarService";
+import { DownloadRounded, WarningRounded } from "@mui/icons-material";
 
 function ViewPurchaseOrderPage() {
   const theme = useTheme();
   const [openDialogue, setOpenDialogue] = useState(false);
   const [purchaseOrderMaster, setPurchaseOrderMaster] =
     useState<PurchaseOrderMaster | null>(null);
-  // const [orderItems, setOrderItems] = useState<PurchaseOrderItem | null>(null);
+  const [orderItems, setOrderItems] = useState<PurchaseOrderItem[]>([]);
   const { order_id } = useParams<{ order_id: string }>();
   const bgColorMap = {
     pending: { color: theme.palette.warning.main },
@@ -29,20 +31,30 @@ function ViewPurchaseOrderPage() {
   };
 
   useEffect(() => {
-    if (!order_id) return;
-
-    fetchPurchaseOrderMasterByID(Number(order_id)).then((data) => {
-      setPurchaseOrderMaster(PurchaseOrderMaster.fromJSON(data));
-    });
+    fetchData();
+    console.log("fetch data");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [order_id]);
 
+  const fetchData = async () => {
+    if (!order_id) return;
+
+    await fetchPurchaseOrderMasterByID(Number(order_id))
+      .then((data) => {
+        setPurchaseOrderMaster(PurchaseOrderMaster.fromJSON(data));
+      })
+      .catch((err) => {
+        console.error("Error fetching order master data:", err);
+      });
+
+    await fetchPurchaseOrderItemsById(Number(order_id))
+      .then((order_items) => setOrderItems(order_items ?? []))
+      .catch((err) => {
+        console.error("Error fetching products:", err);
+      });
+  };
+
   if (!purchaseOrderMaster) return <p>Loading...</p>;
-
-  const orderItemsJSON: PurchaseOrderItemJSON[] = [];
-
-  const order_items: PurchaseOrderItem[] = orderItemsJSON.map((item) =>
-    PurchaseOrderItem.fromJSON(item)
-  );
 
   return (
     <>
@@ -52,9 +64,7 @@ function ViewPurchaseOrderPage() {
       />
 
       <Box mx={4} my={2}>
-        <MasterOrderDetailsTable
-          order={PurchaseOrderMaster.fromJSON(purchaseOrderMaster)}
-        />
+        <MasterOrderDetailsTable order={purchaseOrderMaster} />
         <Box display="flex" alignItems="center" my={3}>
           <PrimaryButton
             label="Add"
@@ -67,8 +77,19 @@ function ViewPurchaseOrderPage() {
           </Divider>
 
           <PrimaryButton
-            label="Print"
-            startIcon={<LocalPrintshopRoundedIcon />}
+            label="Download"
+            startIcon={<DownloadRounded />}
+            onClick={() => {
+              if (orderItems.length === 0) {
+                showSnackbar("Add order items to export excel file", "warning", <WarningRounded />);
+                return;
+              }
+              exportToExcel(
+                purchaseOrderMaster,
+                orderItems,
+                `${order_id}_${purchaseOrderMaster.distributor?.user_name}.xlsx`
+              );
+            }}
           />
         </Box>
         {/* <Divider sx={{ my: 3 }}>
@@ -84,14 +105,17 @@ function ViewPurchaseOrderPage() {
           />{" "}
         </Grid> */}
 
-        <OrderItemsTable order_items={order_items} />
+        <OrderItemsTable order_items={orderItems} onUpdate={fetchData} />
       </Box>
 
       {/* Add Order Items Dialogue */}
       <AddOrderItemsDialog
         order_id={Number(order_id)}
         open={openDialogue}
-        onClose={() => setOpenDialogue(false)}
+        onClose={() => {
+          setOpenDialogue(false);
+          fetchData();
+        }}
       />
     </>
   );

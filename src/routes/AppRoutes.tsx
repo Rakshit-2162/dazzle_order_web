@@ -7,6 +7,7 @@ import DashboardPage from "../pages/DashboardPage/DashboardPage";
 import MyPurchaseOrdersPage from "../pages/MyPurchaseOrdersPage/MyPurchaseOrdersPage";
 import MyAccountPage from "../pages/MyAccountPage/MyAccountPage";
 import ViewPurchaseOrderPage from "../pages/ViewPurchaseOrderPage/ViewPurchaseOrderPage";
+import MyDistributors from "../pages/MyDistributorsPage/MyDistributors";
 
 function AppRoutes() {
   return (
@@ -26,8 +27,11 @@ function AppRoutes() {
           path="/dashboard/viewAllPurchaseOrders/:order_id"
           element={<ViewPurchaseOrderPage />}
         />
+        <Route
+          path="/dashboard/viewMyDistributors"
+          element={<MyDistributors />}
+        />
         <Route path="/dashboard/myAccount" element={<MyAccountPage />} />
-        {/* <Route path="/dashboard" element={<DashboardPage />} /> */}
       </Route>
     </Routes>
   );

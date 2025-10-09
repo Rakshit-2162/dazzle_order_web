@@ -17,7 +17,6 @@ import {
 import Navbar from "../../components/common/Navbar";
 import MyTextField from "../../components/common/MyTextField";
 import PrimaryButton from "../../components/common/PrimaryButton";
-import CustomSnackbar from "../../components/common/CustomSnackBar";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 type FormData = yup.InferType<typeof signUpSchema>;
@@ -136,14 +135,14 @@ function SignUpPage() {
         </Grid>
       </Container>
 
-      {/* ✅ Snackbar for success */}
+      {/* ✅ Snackbar for success
       <CustomSnackbar
         open={snackbarOpen}
         onClose={handleSnackbarClose}
         message="Registration successful!"
         icon={<CheckCircleIcon fontSize="inherit" />}
         color="success"
-      />
+      /> */}
     </>
   );
 }

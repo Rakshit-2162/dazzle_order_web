@@ -4,6 +4,7 @@ import { Controller } from "react-hook-form";
 
 interface MyTextFieldProps {
   name: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: any;
   label?: string;
   type?: string;
@@ -56,6 +57,7 @@ const MyTextField = ({
           rows={rows}
           error={!!error}
           helperText={error ? error.message : ""}
+          autoComplete="off"
           InputProps={{
             startAdornment: startIcon ? (
               <InputAdornment position="start">{startIcon}</InputAdornment>
@@ -74,7 +76,7 @@ const MyTextField = ({
               },
               "&.Mui-focused fieldset": {
                 borderColor: "transparent", // remove blue line
-                boxShadow: "0 0 0 2px rgba(25, 118, 210, 0.3)", // optional soft glow
+                // boxShadow: "0 0 0 2px rgba(25, 118, 210, 0.3)", // optional soft glow
               },
             },
           }}

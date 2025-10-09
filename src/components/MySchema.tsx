@@ -37,5 +37,20 @@ export const searchSchema = yup.object().shape({
 
 export const createPurchaseOrderSchema = yup.object({
   distributor_id: yup.string().required("Distributor is required"),
-  remarks: yup.string().required(),
+  remarks: yup.string().required("Remark is required"),
+});
+
+export const createDistributorSchema = yup.object({
+  distributor_id: yup
+    .string()
+    .length(5, "ID must be of 5 digits")
+    .required("Distributor ID is required"),
+  user_name: yup.string().required("Distributor Name is required"),
+  user_mobile: yup
+    .string()
+    .length(10, "Mobile must be of 10 digits")
+    .required(),
+  user_password: yup.string().required("Password is required"),
+  user_company_name: yup.string().required("Company name is required"),
+  city_state: yup.string().required("Location is required"),
 });

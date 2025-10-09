@@ -1,4 +1,4 @@
-import { AppBar, Box, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Toolbar, Typography, useTheme } from "@mui/material";
 import ThemeToggle from "./ThemeToggle";
 import logo from "../../assets/logo.jpg";
 
@@ -8,9 +8,15 @@ interface NavbarProps {
 }
 
 function TextNavbar({ label, color = "transparent" }: NavbarProps) {
+  const theme = useTheme();
+
   return (
     <>
-      <AppBar position="static" color="transparent" elevation={0}>
+      <AppBar
+        position="fixed"
+        color={theme.palette.mode === "dark" ? "default" : "inherit"}
+        elevation={0}
+      >
         <Toolbar
           sx={{ display: "flex", justifyContent: "space-between", px: 2 }}
         >
@@ -23,12 +29,12 @@ function TextNavbar({ label, color = "transparent" }: NavbarProps) {
           <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
             <Box
               bgcolor={color}
-              color={color === "transparent" ? "" : "white"}
+              color={color === "transparent" ? "primary.main" : "white"}
               borderRadius={2}
               px={2}
               py={1}
             >
-              <Typography variant="h3">{label}</Typography>
+              <Typography variant="h4">{label}</Typography>
             </Box>
             <ThemeToggle />
           </Box>
